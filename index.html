@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Go Out With Me?</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fce4ec;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            color: #880e4f;
+            margin-bottom: 25px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            height: 50px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        #yesBtn {
+            background-color: #ec407a;
+            color: white;
+        }
+
+        #yesBtn:hover {
+            background-color: #d81b60;
+        }
+
+        #noBtn {
+            background-color: #b0bec5;
+            color: #37474f;
+            position: absolute;
+        }
+
+        /* Form styling for the next steps */
+        .hidden {
+            display: none;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .vibe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .vibe-card {
+            border: 2px solid #eee;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .vibe-card:hover, .vibe-card.selected {
+            border-color: #ec407a;
+            background-color: #fce4ec;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="step1" class="card">
+        <h2>🌸 Will you go on a date with me? 🌸</h2>
+        <div class="btn-container">
+            <button id="yesBtn">YES! 💗</button>
+            <button id="noBtn">no 😭</button>
+        </div>
+    </div>
+
+    <div id="step2" class="card hidden">
+        <h2>📅 So... when are you free?</h2>
+        <label for="date">Pick a Day 📆</label>
+        <input type="date" id="date">
+        
+        <label for="time">What Time? ⏰</label>
+        <select id="time">
+            <option value="">Select a time...</option>
+            <option value="4:00 PM">4:00 PM</option>
+            <option value="6:00 PM">6:00 PM</option>
+            <option value="7:30 PM">7:30 PM</option>
+        </select>
+        <button id="nextBtn" style="background-color: #ec407a; color: white;">set the date! 💖</button>
+    </div>
+
+    <div id="step3" class="card hidden">
+        <h2>🍔 What are we feeling?</h2>
+        <p style="color: #666;">pick your vibe</p>
+        <div class="vibe-grid">
+            <div class="vibe-card" onclick="selectVibe(this, 'Pizza')">🍕<br>Pizza</div>
+            <div class="vibe-card" onclick="selectVibe(this, 'Sushi')">🍣<br>Sushi</div>
+            <div class="vibe-card" onclick="selectVibe(this, 'Burgers')">🍔<br>Burgers</div>
+            <div class="vibe-card" onclick="selectVibe(this, 'Pasta')">🍝<br>Pasta</div>
+            <div class="vibe-card" onclick="selectVibe(this, 'Tacos')">🌮<br>Tacos</div>
+            <div class="vibe-card" onclick="selectVibe(this, 'Ramen')">🍜<br>Ramen</div>
+        </div>
+        <button id="finalBtn" style="background-color: #ec407a; color: white; width: 100%;">Confirm! 💕</button>
+    </div>
+
+    <div id="step4" class="card hidden">
+        <h2>🚗 Yay! It's a date!</h2>
+        <p id="summaryText" style="font-weight: bold; color: #880e4f;"></p>
+        <p>I'm coming to get you. No big deal. 😎</p>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const step4 = document.getElementById('step4');
+        
+        let selectedFood = "";
+
+        // 1. The "No" button runs away on hover (or click on mobile)
+        function moveNoButton() {
+            // Get random positions within the screen bounds
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
+            
+            // Apply absolute positioning anywhere on the screen
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('click', moveNoButton);
+
+        // 2. Transition from Step 1 to Step 2
+        yesBtn.addEventListener('click', () => {
+            step1.classList.add('hidden');
+            step2.classList.remove('hidden');
+        });
+
+        // 3. Transition from Step 2 to Step 3
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            const dateVal = document.getElementById('date').value;
+            const timeVal = document.getElementById('time').value;
+            
+            if(!dateVal || !timeVal) {
+                alert("Please select both date and time! 😉");
+                return;
+            }
+            
+            step2.classList.add('hidden');
+            step3.classList.remove('hidden');
+        });
+
+        // Vibe selection logic
+        function selectVibe(element, food) {
+            document.querySelectorAll('.vibe-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedFood = food;
+        }
+
+        // 4. Final confirmation screen
+        document.getElementById('finalBtn').addEventListener('click', () => {
+            if(!selectedFood) {
+                alert("Pick a food vibe! 🍕🍔");
+                return;
+            }
+            const dateVal = document.getElementById('date').value;
+            const timeVal = document.getElementById('time').value;
+
+            document.getElementById('summaryText').innerText = `Be ready on ${dateVal} by ${timeVal} for some ${selectedFood}!`;
+            
+            step3.classList.add('hidden');
+            step4.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

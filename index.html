@@ -65,7 +65,6 @@
             position: absolute;
         }
 
-        /* Form styling for the next steps */
         .hidden {
             display: none;
         }
@@ -118,6 +117,8 @@
         <label for="time">What Time? ⏰</label>
         <select id="time">
             <option value="">Select a time...</option>
+            <option value="12:00 PM">12:00 PM</option>
+            <option value="2:00 PM">2:00 PM</option>
             <option value="4:00 PM">4:00 PM</option>
             <option value="6:00 PM">6:00 PM</option>
             <option value="7:30 PM">7:30 PM</option>
@@ -155,13 +156,10 @@
         
         let selectedFood = "";
 
-        // 1. The "No" button runs away on hover (or click on mobile)
+        // ১. No বাটন মুভ করার লজিক
         function moveNoButton() {
-            // Get random positions within the screen bounds
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
-            
-            // Apply absolute positioning anywhere on the screen
             noBtn.style.position = 'fixed';
             noBtn.style.left = x + 'px';
             noBtn.style.top = y + 'px';
@@ -170,13 +168,13 @@
         noBtn.addEventListener('mouseover', moveNoButton);
         noBtn.addEventListener('click', moveNoButton);
 
-        // 2. Transition from Step 1 to Step 2
+        // ২. Step 1 -> Step 2
         yesBtn.addEventListener('click', () => {
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
         });
 
-        // 3. Transition from Step 2 to Step 3
+        // ৩. Step 2 -> Step 3
         document.getElementById('nextBtn').addEventListener('click', () => {
             const dateVal = document.getElementById('date').value;
             const timeVal = document.getElementById('time').value;
@@ -185,19 +183,17 @@
                 alert("Please select both date and time! 😉");
                 return;
             }
-            
             step2.classList.add('hidden');
             step3.classList.remove('hidden');
         });
 
-        // Vibe selection logic
         function selectVibe(element, food) {
             document.querySelectorAll('.vibe-card').forEach(card => card.classList.remove('selected'));
             element.classList.add('selected');
             selectedFood = food;
         }
 
-        // 4. Final confirmation screen
+        // ৪. ফাইনাল কনফার্মেশন এবং ডিসকর্ড নোটিফিকেশন সেন্ড করা
         document.getElementById('finalBtn').addEventListener('click', () => {
             if(!selectedFood) {
                 alert("Pick a food vibe! 🍕🍔");
@@ -210,6 +206,34 @@
             
             step3.classList.add('hidden');
             step4.classList.remove('hidden');
+
+            // ⚠️ নিচের লাইনে আপনার ডিসকর্ড Webhook URL-টি পেস্ট করুন
+            const discordWebhookUrl = "https://discord.com/api/webhooks/1513205628745548028/tuK2tbt2DbiYPs9NcDbX8QcIH4578kXZhc8PiLQkFnQ5r8vU7djO1Z2QcDJawHGazFgp";
+
+            // ডিসকর্ডে পাঠানোর জন্য মেসেজ ফরম্যাট
+            const discordMessage = {
+                username: "Date Planner Bot",
+                avatar_url: "https://i.imgur.com/4M34gMc.png",
+                embeds: [{
+                    title: "💘 New Date Proposal Accepted! 💘",
+                    color: 15481466, // Pink Color Code
+                    fields: [
+                        { name: "📅 Date", value: dateVal, inline: true },
+                        { name: "⏰ Time", value: timeVal, inline: true },
+                        { name: "🍔 Food Vibe", value: selectedFood, inline: true }
+                    ],
+                    footer: { text: "🚗 Get ready to pick her up!" }
+                }]
+            };
+
+            // Fetch API দিয়ে ডিসকর্ডে ডেটা পাঠানো
+            fetch(discordWebhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(discordMessage)
+            })
+            .then(response => console.log("Notification sent to Discord!"))
+            .catch(error => console.error("Error sending notification:", error));
         });
     </script>
 </body>

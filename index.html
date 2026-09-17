@@ -156,7 +156,6 @@
         
         let selectedFood = "";
 
-        // ১. No বাটন মুভ করার লজিক
         function moveNoButton() {
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
@@ -168,13 +167,11 @@
         noBtn.addEventListener('mouseover', moveNoButton);
         noBtn.addEventListener('click', moveNoButton);
 
-        // ২. Step 1 -> Step 2
         yesBtn.addEventListener('click', () => {
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
         });
 
-        // ৩. Step 2 -> Step 3
         document.getElementById('nextBtn').addEventListener('click', () => {
             const dateVal = document.getElementById('date').value;
             const timeVal = document.getElementById('time').value;
@@ -193,7 +190,6 @@
             selectedFood = food;
         }
 
-        // ৪. ফাইনাল কনফার্মেশন এবং ডিসকর্ড নোটিফিকেশন সেন্ড করা
         document.getElementById('finalBtn').addEventListener('click', () => {
             if(!selectedFood) {
                 alert("Pick a food vibe! 🍕🍔");
@@ -207,16 +203,14 @@
             step3.classList.add('hidden');
             step4.classList.remove('hidden');
 
-            // ⚠️ নিচের লাইনে আপনার ডিসকর্ড Webhook URL-টি পেস্ট করুন
             const discordWebhookUrl = "https://discord.com/api/webhooks/1513205628745548028/tuK2tbt2DbiYPs9NcDbX8QcIH4578kXZhc8PiLQkFnQ5r8vU7djO1Z2QcDJawHGazFgp";
 
-            // ডিসকর্ডে পাঠানোর জন্য মেসেজ ফরম্যাট
             const discordMessage = {
                 username: "Date Planner Bot",
                 avatar_url: "https://i.imgur.com/4M34gMc.png",
                 embeds: [{
                     title: "💘 New Date Proposal Accepted! 💘",
-                    color: 15481466, // Pink Color Code
+                    color: 15481466, 
                     fields: [
                         { name: "📅 Date", value: dateVal, inline: true },
                         { name: "⏰ Time", value: timeVal, inline: true },
@@ -226,7 +220,6 @@
                 }]
             };
 
-            // Fetch API দিয়ে ডিসকর্ডে ডেটা পাঠানো
             fetch(discordWebhookUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
